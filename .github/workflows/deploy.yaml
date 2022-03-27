@@ -2,8 +2,8 @@ name: Deploy to GCP using Terraform
 
 on:
   push:
-    # branches:
-    #   - main
+    branches:
+      - main
 
 env:
   GKE_CLUSTER: britbus-gke
@@ -46,13 +46,4 @@ jobs:
       run: |-
         terraform init
         terraform apply -auto-approve
-
-    # - name: Set up GKE credentials
-    #   uses: google-github-actions/get-gke-credentials@v0
-    #   with:
-    #     cluster_name: ${{ env.GKE_CLUSTER }}
-    #     location: ${{ env.GKE_ZONE }}
-
-    # - name: Test
-    #   run: |-
-    #     kubectl get pods
+  
