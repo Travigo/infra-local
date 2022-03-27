@@ -1,0 +1,49 @@
+name: Deploy to GCP using Terraform
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  GKE_CLUSTER: britbus-gke
+  GCP_ZONE: europe-central2-a
+  TF_VAR_gcp_project_id: britbus
+  TF_VAR_cloudflare_zone: britbus.app
+  TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  TF_VAR_cloudflare_email: ${{ secrets.CLOUDFLARE_EMAIL }}
+  TF_VAR_cloudflare_token: ${{ secrets.CLOUDFLARE_TOKEN }}
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup & Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Configure Workload Identity Federation and generate an access token.
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: 'projects/635806391814/locations/global/workloadIdentityPools/github/providers/github-actions'
+        service_account: 'github-actions@britbus.iam.gserviceaccount.com'
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1.2.1
+      with:
+        terraform_version: 1.1
+
+    - name: Terraform apply
+      run: |-
+        terraform init
+        terraform apply -auto-approve
+  
