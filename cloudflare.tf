@@ -42,7 +42,7 @@ resource "cloudflare_argo_tunnel" "gke_tunnel" {
 # Create DNS entries for the cloudflare tunnel
 resource "cloudflare_record" "root" {
   zone_id = local.cloudflare_zone_id
-  name    = "${var.cloudflare_zone}"
+  name    = var.cloudflare_zone
   value   = "${cloudflare_argo_tunnel.gke_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
