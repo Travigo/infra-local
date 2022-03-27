@@ -16,24 +16,26 @@ terraform {
       source  = "hashicorp/helm"
       version = "2.4.1"
     }
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+      version = "3.11.0"
+    }
   }
 
   required_version = ">= 1.1"
 }
 
 provider "google" {
-  project = var.project_id
-  region  = "europe-central2"
+  project = var.gcp_project_id
+  region  = var.gcp_region
 }
 
 provider "kubernetes" {
-  load_config_file = "false"
-
   host     = google_container_cluster.primary.endpoint
 
-  client_certificate     = google_container_cluster.primary.master_auth.0.client_certificate
-  client_key             = google_container_cluster.primary.master_auth.0.client_key
-  cluster_ca_certificate = google_container_cluster.primary.master_auth.0.cluster_ca_certificate
+  client_certificate     = base64decode(google_container_cluster.primary.master_auth.0.client_certificate)
+  client_key             = base64decode(google_container_cluster.primary.master_auth.0.client_key)
+  cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)
 }
 
 provider "helm" {
@@ -44,4 +46,10 @@ provider "helm" {
     client_key             = base64decode(google_container_cluster.primary.master_auth.0.client_key)
     cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)
   }
+}
+
+provider "cloudflare" {
+  email      = var.cloudflare_email
+  account_id = var.cloudflare_account_id
+  api_key    = var.cloudflare_token
 }

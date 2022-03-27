@@ -1,7 +1,7 @@
 # GKE cluster
 resource "google_container_cluster" "primary" {
-  name     = "${var.project_id}-gke"
-  location = "europe-central2-a"
+  name     = "${var.gcp_project_id}-gke"
+  location = var.gcp_zone
   
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -10,7 +10,7 @@ resource "google_container_cluster" "primary" {
   initial_node_count       = 1
 
   network    = google_compute_network.vpc.name
-  subnetwork = google_compute_subnetwork.warsaw-subnet.name
+  subnetwork = google_compute_subnetwork.primary-subnet.name
 
   ip_allocation_policy {
     cluster_ipv4_cidr_block = ""
@@ -34,7 +34,7 @@ resource "google_container_cluster" "primary" {
 # Spot Nodes
 resource "google_container_node_pool" "spot_nodes" {
   name       = "${google_container_cluster.primary.name}-spot-node-pool"
-  location   = "europe-central2-a"
+  location   = var.gcp_zone
   cluster    = google_container_cluster.primary.name
   node_count = 1
 
@@ -45,15 +45,15 @@ resource "google_container_node_pool" "spot_nodes" {
     ]
 
     labels = {
-      env = var.project_id
+      env = var.gcp_project_id
     }
 
     spot  = true
 
-    machine_type = "e2-standard-2"
+    machine_type = "e2-small" # e2-standard-2
     disk_size_gb = 15
 
-    tags         = ["gke-node", "${var.project_id}-gke"]
+    tags         = ["gke-node", "${var.gcp_project_id}-gke"]
     metadata = {
       disable-legacy-endpoints = "true"
     }
