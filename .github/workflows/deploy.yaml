@@ -40,6 +40,7 @@ jobs:
 
     - name: Terraform apply
       run: |-
+        terraform init
         terraform apply -auto-approve
 
     # - name: Set up GKE credentials
