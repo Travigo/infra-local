@@ -1,12 +1,12 @@
 name: Deploy to GCP using Terraform
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
 
 env:
-  GKE_CLUSTER: britbus-gke
   GCP_ZONE: europe-central2-a
   TF_VAR_gcp_project_id: britbus
   TF_VAR_cloudflare_zone: britbus.app
