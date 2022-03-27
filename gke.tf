@@ -50,8 +50,8 @@ resource "google_container_node_pool" "spot_nodes" {
 
     spot  = true
 
-    machine_type = "e2-small" # e2-standard-2
-    disk_size_gb = 15
+    machine_type = "e2-standard-2"
+    disk_size_gb = 16
 
     tags         = ["gke-node", "${var.gcp_project_id}-gke"]
     metadata = {
