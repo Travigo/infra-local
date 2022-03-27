@@ -7,8 +7,12 @@ on:
 
 env:
   GKE_CLUSTER: britbus-gke
-  GKE_ZONE: europe-central2-a
-#   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GCP_ZONE: europe-central2-a
+  GCP_PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  TF_VAR_cloudflare_zone: britbus.app
+  TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  TF_VAR_cloudflare_email: ${{ secrets.CLOUDFLARE_EMAIL }}
+  TF_VAR_cloudflare_token: ${{ secrets.CLOUDFLARE_TOKEN }}
 
 jobs:
   setup-build-publish-deploy:
