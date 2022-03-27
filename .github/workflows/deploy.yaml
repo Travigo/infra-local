@@ -33,12 +33,21 @@ jobs:
         workload_identity_provider: 'projects/635806391814/locations/global/workloadIdentityPools/github/providers/github-actions'
         service_account: 'github-actions@britbus.iam.gserviceaccount.com'
 
-    - name: Set up GKE credentials
-      uses: google-github-actions/get-gke-credentials@v0
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1.2.1
       with:
-        cluster_name: ${{ env.GKE_CLUSTER }}
-        location: ${{ env.GKE_ZONE }}
+        terraform_version: 1.1
 
-    - name: Test
+    - name: Terraform apply
       run: |-
-        kubectl get pods
+        terraform apply -auto-approve
+
+    # - name: Set up GKE credentials
+    #   uses: google-github-actions/get-gke-credentials@v0
+    #   with:
+    #     cluster_name: ${{ env.GKE_CLUSTER }}
+    #     location: ${{ env.GKE_ZONE }}
+
+    # - name: Test
+    #   run: |-
+    #     kubectl get pods
