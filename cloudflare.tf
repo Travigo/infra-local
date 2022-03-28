@@ -47,6 +47,13 @@ resource "cloudflare_record" "root" {
   type    = "CNAME"
   proxied = true
 }
+resource "cloudflare_record" "www" {
+  zone_id = local.cloudflare_zone_id
+  name    = "www.${var.cloudflare_zone}"
+  value   = "${cloudflare_argo_tunnel.gke_tunnel.id}.cfargotunnel.com"
+  type    = "CNAME"
+  proxied = true
+}
 resource "cloudflare_record" "api" {
   zone_id = local.cloudflare_zone_id
   name    = "api.${var.cloudflare_zone}"
