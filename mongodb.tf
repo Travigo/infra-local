@@ -85,14 +85,15 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
             name = "mongodb-database-password"
           }
           scramCredentialsSecretName = "mongodb-scram"
+          # TODO: This needs improving
           roles = [
             {
-              name = "clusterAdmin"
+              name = "root"
               db = "admin"
             },
             {
-              name = "userAdminAnyDatabase"
-              db = "admin"
+              name = "root"
+              db = "britbus"
             }
           ]
         }
