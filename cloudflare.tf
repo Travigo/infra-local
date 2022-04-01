@@ -61,3 +61,10 @@ resource "cloudflare_record" "api" {
   type    = "CNAME"
   proxied = true
 }
+resource "cloudflare_record" "kibana" {
+  zone_id = local.cloudflare_zone_id
+  name    = "kibana.${var.cloudflare_zone}"
+  value   = "${cloudflare_argo_tunnel.gke_tunnel.id}.cfargotunnel.com"
+  type    = "CNAME"
+  proxied = true
+}
