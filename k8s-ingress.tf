@@ -19,10 +19,6 @@ resource "helm_release" "ingress-nginx" {
     value = "ClusterIP"
   }
   set {
-    name = "controller.resources.requests.cpu"
-    value = "10m"
-  }
-  set {
     name  = "defaultBackend.enabled"
     value = "true"
   }

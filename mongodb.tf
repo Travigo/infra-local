@@ -24,11 +24,11 @@ resource "helm_release" "mongodb-operator" {
   }
   set {
     name  = "operator.resources.requests.cpu"
-    value = "10m"
+    value = "100m"
   }
   set {
     name  = "operator.resources.requests.memory"
-    value = "50Mi"
+    value = "200Mi"
   }
 }
 
