@@ -36,7 +36,7 @@ resource "google_container_node_pool" "spot_nodes" {
   name       = "${google_container_cluster.primary.name}-spot-node-pool"
   location   = var.gcp_zone
   cluster    = google_container_cluster.primary.name
-  node_count = 1
+  node_count = 2
 
   node_config {
     oauth_scopes = [

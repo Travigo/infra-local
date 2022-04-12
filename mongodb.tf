@@ -66,7 +66,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     }
 
     spec = {
-      members = 1
+      members = 2
       type = "ReplicaSet"
       version = "5.0.4"
 
@@ -101,32 +101,32 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
 
       statefulSet = {
         spec = {
-          volumeClaimTemplates = [
-            {
-              metadata = {
-                name = "data-volume"
-              }
-              spec = {
-                resources = {
-                  requests = {
-                    storage = "15Gi"
-                  }
-                }
-              }
-            },
-            {
-              metadata = {
-                name = "logs-volume"
-              }
-              spec = {
-                resources = {
-                  requests = {
-                    storage = "2Gi"
-                  }
-                }
-              }
-            }
-          ]
+          # volumeClaimTemplates = [
+          #   {
+          #     metadata = {
+          #       name = "data-volume"
+          #     }
+          #     spec = {
+          #       resources = {
+          #         requests = {
+          #           storage = "15Gi"
+          #         }
+          #       }
+          #     }
+          #   },
+          #   {
+          #     metadata = {
+          #       name = "logs-volume"
+          #     }
+          #     spec = {
+          #       resources = {
+          #         requests = {
+          #           storage = "2Gi"
+          #         }
+          #       }
+          #     }
+          #   }
+          # ]
 
           template = {
             spec = {
