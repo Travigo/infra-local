@@ -66,7 +66,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     }
 
     spec = {
-      members = 2
+      members = 1
       type = "ReplicaSet"
       version = "5.0.4"
 
@@ -101,32 +101,32 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
 
       statefulSet = {
         spec = {
-          # volumeClaimTemplates = [
-          #   {
-          #     metadata = {
-          #       name = "data-volume"
-          #     }
-          #     spec = {
-          #       resources = {
-          #         requests = {
-          #           storage = "15Gi"
-          #         }
-          #       }
-          #     }
-          #   },
-          #   {
-          #     metadata = {
-          #       name = "logs-volume"
-          #     }
-          #     spec = {
-          #       resources = {
-          #         requests = {
-          #           storage = "2Gi"
-          #         }
-          #       }
-          #     }
-          #   }
-          # ]
+          volumeClaimTemplates = [
+            {
+              metadata = {
+                name = "data-volume"
+              }
+              spec = {
+                resources = {
+                  requests = {
+                    storage = "10Gi"
+                  }
+                }
+              }
+            },
+            {
+              metadata = {
+                name = "logs-volume"
+              }
+              spec = {
+                resources = {
+                  requests = {
+                    storage = "500Mi"
+                  }
+                }
+              }
+            }
+          ]
 
           template = {
             spec = {
@@ -135,8 +135,8 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   name = "mongod"
                   resources = {
                     limits = {
-                      cpu = "2"
-                      memory = "4Gi"
+                      cpu = "4"
+                      memory = "6Gi"
                     }
                     requests = {
                       cpu = "500m"
@@ -148,8 +148,8 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   name = "mongodb-agent"
                   resources = {
                     limits = {
-                      cpu = "2"
-                      memory = "4Gi"
+                      cpu = "4"
+                      memory = "6Gi"
                     }
                     requests = {
                       cpu = "500m"
