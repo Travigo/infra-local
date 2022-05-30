@@ -20,7 +20,11 @@ resource "google_container_cluster" "primary" {
   # This enables data-plane v2 which does support network_policy
   datapath_provider = "ADVANCED_DATAPATH"
 
-  min_master_version = "1.22"
+  min_master_version = "1.23"
+
+  workload_identity_config {
+    workload_pool = "${var.gcp_project_id}.svc.id.goog"
+  }
 
   # TODO: get rid of this and do proper RBAC (Google groups for RBAC & Workload Identity)
   enable_legacy_abac = true
@@ -50,7 +54,7 @@ resource "google_container_node_pool" "spot_nodes" {
 
     spot  = true
 
-    machine_type = "e2-standard-2"
+    machine_type = "e2-standard-4"
     disk_size_gb = 16
 
     tags         = ["gke-node", "${var.gcp_project_id}-gke"]

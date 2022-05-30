@@ -109,7 +109,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
               spec = {
                 resources = {
                   requests = {
-                    storage = "10Gi"
+                    storage = "16Gi"
                   }
                 }
               }
@@ -136,11 +136,11 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   resources = {
                     limits = {
                       cpu = "4"
-                      memory = "6Gi"
+                      memory = "14Gi"
                     }
                     requests = {
-                      cpu = "500m"
-                      memory = "500M"
+                      cpu = "1"
+                      memory = "8Gi"
                     }
                   }
                 },
@@ -148,11 +148,11 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   name = "mongodb-agent"
                   resources = {
                     limits = {
-                      cpu = "4"
-                      memory = "6Gi"
+                      cpu = "1"
+                      memory = "2Gi"
                     }
                     requests = {
-                      cpu = "500m"
+                      cpu = "1"
                       memory = "500M"
                     }
                   }
