@@ -49,9 +49,13 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
                 {
                   name = "elasticsearch"
                   resources = {
-                    limits = {
+                    requests = {
                       memory = "8Gi"
                       cpu = "2"
+                    },
+                    limits = {
+                      memory = "8Gi"
+                      cpu = "4"
                     }
                   }
                 }
