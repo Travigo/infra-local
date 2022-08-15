@@ -33,7 +33,7 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
     }
 
     spec = {
-      version = "8.1.3"
+      version = "8.3.3"
       nodeSets = [
         {
           name = "primary"
@@ -106,7 +106,7 @@ resource "kubernetes_manifest" "kibana-primary" {
     }
 
     spec = {
-      version = "8.1.3"
+      version = "8.3.3"
       count = 1
       elasticsearchRef = {
         name = "primary"
