@@ -70,7 +70,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     spec = {
       members = 1
       type = "ReplicaSet"
-      version = "5.3.2"
+      version = "5.0.11"
 
       security = {
         authentication = {
@@ -111,7 +111,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
               spec = {
                 resources = {
                   requests = {
-                    storage = "18Gi"
+                    storage = "22Gi"
                   }
                 }
               }
