@@ -6,19 +6,19 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google-beta"
-      version = "4.15.0"
+      version = "4.47.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.9.0"
+      version = "2.16.1"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "2.4.1"
+      version = "2.8.0"
     }
     cloudflare = {
       source = "cloudflare/cloudflare"
-      version = "3.11.0"
+      version = "3.31.0"
     }
   }
 
@@ -50,6 +50,5 @@ provider "helm" {
 
 provider "cloudflare" {
   email      = var.cloudflare_email
-  account_id = var.cloudflare_account_id
   api_key    = var.cloudflare_token
 }

@@ -17,7 +17,7 @@ resource "google_storage_bucket_access_control" "realtime_archiver_service_accou
 
 module "realtime_archiver_service_account_workload_identity" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "21.1.0"
+  version             = "24.1.0"
 
   use_existing_gcp_sa = true
   name                = google_service_account.realtime_archiver_service_account.account_id
@@ -46,7 +46,7 @@ resource "google_storage_bucket_access_control" "stats_indexer_service_account" 
 
 module "stats_indexer_service_account_workload_identity" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "21.1.0"
+  version             = "24.1.0"
 
   use_existing_gcp_sa = true
   name                = google_service_account.stats_indexer_service_account.account_id

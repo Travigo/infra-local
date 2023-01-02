@@ -20,7 +20,7 @@ resource "google_container_cluster" "primary" {
   # This enables data-plane v2 which does support network_policy
   datapath_provider = "ADVANCED_DATAPATH"
 
-  min_master_version = "1.23"
+  min_master_version = "1.25"
 
   workload_identity_config {
     workload_pool = "${var.gcp_project_id}.svc.id.goog"

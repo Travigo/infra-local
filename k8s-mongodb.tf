@@ -12,7 +12,7 @@ resource "helm_release" "mongodb-operator" {
   repository = "https://mongodb.github.io/helm-charts"
   chart      = "community-operator"
 
-  version = "0.7.5"
+  version = "0.7.6"
 
   # namespace = kubernetes_namespace.mongodb.metadata[0].name
 
