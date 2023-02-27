@@ -33,7 +33,7 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
     }
 
     spec = {
-      version = "8.5.3"
+      version = "8.6.1"
       nodeSets = [
         {
           name = "primary"
@@ -75,7 +75,7 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
                 ]
                 resources = {
                   requests = {
-                    storage = "2Gi"
+                    storage = "30Gi"
                   }
                 }
               }
@@ -106,7 +106,7 @@ resource "kubernetes_manifest" "kibana-primary" {
     }
 
     spec = {
-      version = "8.5.3"
+      version = "8.6.1"
       count = 1
       elasticsearchRef = {
         name = "primary"
@@ -137,7 +137,7 @@ resource "kubernetes_manifest" "kibana-primary" {
 #     }
 
 #     spec = {
-#       version = "8.1.3"
+#       version = "8.6.1"
 #       type = "metricbeat"
 
 #       elasticsearchRef = {

@@ -1,0 +1,99 @@
+apiVersion: beat.k8s.elastic.co/v1beta1
+kind: Beat
+metadata:
+  name: quickstart
+spec:
+  type: filebeat
+  version: 8.6.1
+  elasticsearchRef:
+    name: primary
+  config:
+    filebeat.inputs:
+    - type: container
+      enabled: true
+      symlinks: true
+      stream: all
+      paths:
+        - "/var/log/containers/*.log"
+      encoding: utf-8
+      processors:
+        - add_kubernetes_metadata:
+            in_cluster: true
+            host: ${NODE_NAME}
+            matchers:
+            - logs_path:
+                logs_path: "/var/log/containers/"
+      multiline.pattern: '[[:space:]]+(at|\.{3}|Caused by)'
+      multiline.negate: false
+      multiline.match: after
+      # json.keys_under_root: false
+      # json.message_key: message
+    # processors:
+    # - add_kubernetes_metadata:
+    #    host: ${NODE_NAME}
+    #    matchers:
+    #    - logs_path:
+    #        logs_path: "/var/log/containers/"
+  daemonSet:
+    podTemplate:
+      spec:
+        serviceAccount: elastic-beat-filebeat-quickstart
+        automountServiceAccountToken: true
+        dnsPolicy: ClusterFirstWithHostNet
+        hostNetwork: true
+        securityContext:
+          runAsUser: 0
+        containers:
+        - name: filebeat
+          env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          volumeMounts:
+          - name: varlogcontainers
+            mountPath: /var/log/containers
+          - name: varlogpods
+            mountPath: /var/log/pods
+        volumes:
+        - name: varlogcontainers
+          hostPath:
+            path: /var/log/containers
+        - name: varlogpods
+          hostPath:
+            path: /var/log/pods
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: elastic-beat-filebeat-quickstart
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: elastic-beat-autodiscover-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: elastic-beat-autodiscover
+subjects:
+- kind: ServiceAccount
+  name: elastic-beat-filebeat-quickstart
+  namespace: elastic
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: elastic-beat-autodiscover
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  - namespaces
+  - events
+  - pods
+  verbs:
+  - get
+  - list
+  - watch

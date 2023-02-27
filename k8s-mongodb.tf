@@ -12,7 +12,7 @@ resource "helm_release" "mongodb-operator" {
   repository = "https://mongodb.github.io/helm-charts"
   chart      = "community-operator"
 
-  version = "0.7.6"
+  version = "0.7.8"
 
   # namespace = kubernetes_namespace.mongodb.metadata[0].name
 
@@ -70,7 +70,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     spec = {
       members = 1
       type = "ReplicaSet"
-      version = "5.0.11"
+      version = "5.0.15"
 
       security = {
         authentication = {
@@ -111,7 +111,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
               spec = {
                 resources = {
                   requests = {
-                    storage = "22Gi"
+                    storage = "40Gi"
                   }
                 }
               }
@@ -123,7 +123,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
               spec = {
                 resources = {
                   requests = {
-                    storage = "1Gi"
+                    storage = "4Gi"
                   }
                 }
               }
@@ -137,8 +137,8 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   name = "mongod"
                   resources = {
                     limits = {
-                      cpu = "4"
-                      memory = "14Gi"
+                      cpu = "6"
+                      memory = "16Gi"
                     }
                     requests = {
                       cpu = "1"
@@ -150,8 +150,8 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   name = "mongodb-agent"
                   resources = {
                     limits = {
-                      cpu = "1"
-                      memory = "2Gi"
+                      cpu = "4"
+                      memory = "12Gi"
                     }
                     requests = {
                       cpu = "1"

@@ -7,13 +7,18 @@ resource "kubernetes_namespace" "cloudflared" {
 }
 
 resource "kubernetes_deployment" "cloudflared" {
+  depends_on = [
+    kubernetes_config_map.cloudflared,
+    kubernetes_secret.cloudflared
+  ]
+
   metadata {
     name      = "cloudflared"
     namespace = kubernetes_namespace.cloudflared.metadata[0].name
   }
 
   spec {
-    replicas = 2
+    replicas = 1
 
     selector {
       match_labels = {
@@ -85,7 +90,7 @@ resource "kubernetes_config_map" "cloudflared" {
   data = {
     "config.yaml" = <<EOT
 # Name of the tunnel you want to run
-tunnel: ${cloudflare_argo_tunnel.gke_tunnel.id}
+tunnel: ${cloudflare_argo_tunnel.ovh_tunnel.id}
 credentials-file: /etc/cloudflared/creds/credentials.json
 # Serves the metrics server under /metrics and the readiness server under /ready
 metrics: 0.0.0.0:2000
@@ -113,8 +118,8 @@ resource "kubernetes_secret" "cloudflared" {
   data = {
     "credentials.json" = jsonencode({
       "AccountTag"   = var.cloudflare_account_id,
-      "TunnelID"     = cloudflare_argo_tunnel.gke_tunnel.id,
-      "TunnelName"   = cloudflare_argo_tunnel.gke_tunnel.name,
+      "TunnelID"     = cloudflare_argo_tunnel.ovh_tunnel.id,
+      "TunnelName"   = cloudflare_argo_tunnel.ovh_tunnel.name,
       "TunnelSecret" = random_id.tunnel_secret.b64_std
     })
   }
