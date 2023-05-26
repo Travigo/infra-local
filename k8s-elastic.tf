@@ -112,7 +112,7 @@ resource "kubernetes_manifest" "kibana-primary" {
         name = "primary"
       }
       config = {
-        "server.publicBaseUrl" = "https://kibana.britbus.app"
+        "server.publicBaseUrl" = "https://kibana.travigo.app"
       }
     }
   }
@@ -323,7 +323,7 @@ resource "kubernetes_ingress_v1" "kibana_ingress" {
     ingress_class_name = "nginx"
 
     rule {
-      host = "kibana.britbus.app"
+      host = "kibana.travigo.app"
 
       http {
         path {

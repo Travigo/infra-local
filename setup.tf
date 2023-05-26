@@ -1,8 +1,8 @@
 terraform {
-  backend "gcs" { 
-    bucket  = "britbus-infra"
-    prefix  = "terraform/ovh/state"
-  }
+  # backend "gcs" { 
+  #   bucket  = "britbus-infra"
+  #   prefix  = "terraform/ovh/state"
+  # }
   required_providers {
     google = {
       source  = "hashicorp/google-beta"

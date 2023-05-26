@@ -35,7 +35,7 @@ resource "random_id" "tunnel_secret" {
 # A Named Tunnel resource called terraform-gcp-gke
 resource "cloudflare_argo_tunnel" "ovh_tunnel" {
   account_id = var.cloudflare_account_id
-  name       = "britbus-ovh-kube"
+  name       = "travigo-ovh-kube"
   secret     = random_id.tunnel_secret.b64_std
 }
 

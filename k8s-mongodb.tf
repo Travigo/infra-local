@@ -12,7 +12,7 @@ resource "helm_release" "mongodb-operator" {
   repository = "https://mongodb.github.io/helm-charts"
   chart      = "community-operator"
 
-  version = "0.7.8"
+  version = "0.8.0"
 
   # namespace = kubernetes_namespace.mongodb.metadata[0].name
 
@@ -62,7 +62,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     kind       = "MongoDBCommunity"
 
     metadata = {
-      name = "britbus-mongodb"
+      name = "travigo-mongodb"
       # namespace = kubernetes_namespace.mongodb.metadata[0].name
       namespace = "default"
     }
@@ -70,7 +70,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     spec = {
       members = 1
       type = "ReplicaSet"
-      version = "5.0.15"
+      version = "6.0.6"
 
       security = {
         authentication = {
@@ -82,7 +82,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
 
       users = [
         {
-          name = "britbus"
+          name = "travigo"
           passwordSecretRef = {
             name = "mongodb-database-password"
           }
@@ -95,7 +95,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
             },
             {
               name = "root"
-              db = "britbus"
+              db = "travigo"
             }
           ]
         }
