@@ -10,15 +10,15 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.16.1"
+      version = "2.22.0"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "2.8.0"
+      version = "2.10.1"
     }
     cloudflare = {
       source = "cloudflare/cloudflare"
-      version = "3.31.0"
+      version = "4.11.0"
     }
   }
 

@@ -33,7 +33,7 @@ resource "random_id" "tunnel_secret" {
 }
 
 # A Named Tunnel resource called terraform-gcp-gke
-resource "cloudflare_argo_tunnel" "ovh_tunnel" {
+resource "cloudflare_tunnel" "ovh_tunnel" {
   account_id = var.cloudflare_account_id
   name       = "travigo-ovh-kube"
   secret     = random_id.tunnel_secret.b64_std
@@ -43,28 +43,28 @@ resource "cloudflare_argo_tunnel" "ovh_tunnel" {
 resource "cloudflare_record" "root" {
   zone_id = local.cloudflare_zone_id
   name    = var.cloudflare_zone
-  value   = "${cloudflare_argo_tunnel.ovh_tunnel.id}.cfargotunnel.com"
+  value   = "${cloudflare_tunnel.ovh_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "www" {
   zone_id = local.cloudflare_zone_id
   name    = "www.${var.cloudflare_zone}"
-  value   = "${cloudflare_argo_tunnel.ovh_tunnel.id}.cfargotunnel.com"
+  value   = "${cloudflare_tunnel.ovh_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "api" {
   zone_id = local.cloudflare_zone_id
   name    = "api.${var.cloudflare_zone}"
-  value   = "${cloudflare_argo_tunnel.ovh_tunnel.id}.cfargotunnel.com"
+  value   = "${cloudflare_tunnel.ovh_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "kibana" {
   zone_id = local.cloudflare_zone_id
   name    = "kibana.${var.cloudflare_zone}"
-  value   = "${cloudflare_argo_tunnel.ovh_tunnel.id}.cfargotunnel.com"
+  value   = "${cloudflare_tunnel.ovh_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
