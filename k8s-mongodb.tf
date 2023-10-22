@@ -12,7 +12,7 @@ resource "helm_release" "mongodb-operator" {
   repository = "https://mongodb.github.io/helm-charts"
   chart      = "community-operator"
 
-  version = "0.8.1"
+  version = "0.8.3"
 
   # namespace = kubernetes_namespace.mongodb.metadata[0].name
 
@@ -70,7 +70,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     spec = {
       members = 1
       type = "ReplicaSet"
-      version = "6.0.8"
+      version = "6.0.11"
 
       security = {
         authentication = {
