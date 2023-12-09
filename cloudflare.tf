@@ -68,3 +68,10 @@ resource "cloudflare_record" "kibana" {
   type    = "CNAME"
   proxied = true
 }
+resource "cloudflare_record" "web" {
+  zone_id = local.cloudflare_zone_id
+  name    = "web.${var.cloudflare_zone}"
+  value   = "${cloudflare_tunnel.ovh_tunnel.id}.cfargotunnel.com"
+  type    = "CNAME"
+  proxied = true
+}
