@@ -1,20 +1,10 @@
-# resource "kubernetes_namespace" "mongodb" {
-#   metadata {
-#     name        = "mongodb"
-#     annotations = {}
-#     labels      = {}
-#   }
-# }
-
 resource "helm_release" "mongodb-operator" {
   name       = "mongodb-operator"
 
   repository = "https://mongodb.github.io/helm-charts"
   chart      = "community-operator"
 
-  version = "0.8.3"
-
-  # namespace = kubernetes_namespace.mongodb.metadata[0].name
+  version = "0.10.0"
 
   set {
     name  = "operator.resources.limits.cpu"
@@ -26,11 +16,11 @@ resource "helm_release" "mongodb-operator" {
   }
   set {
     name  = "operator.resources.requests.cpu"
-    value = "10m"
+    value = "1m"
   }
   set {
     name  = "operator.resources.requests.memory"
-    value = "50Mi"
+    value = "1Mi"
   }
 }
 
@@ -42,7 +32,6 @@ resource "random_password" "mongodb-database-password" {
 resource "kubernetes_secret" "mongodb-database-password" {
   metadata {
     name      = "mongodb-database-password"
-    # namespace = kubernetes_namespace.mongodb.metadata[0].name
   }
 
   data = {
@@ -63,14 +52,13 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
 
     metadata = {
       name = "travigo-mongodb"
-      # namespace = kubernetes_namespace.mongodb.metadata[0].name
       namespace = "default"
     }
 
     spec = {
       members = 1
       type = "ReplicaSet"
-      version = "6.0.11"
+      version = "7.0.12"
 
       security = {
         authentication = {
@@ -111,7 +99,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
               spec = {
                 resources = {
                   requests = {
-                    storage = "40Gi"
+                    storage = "100Gi"
                   }
                 }
               }
@@ -137,12 +125,12 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   name = "mongod"
                   resources = {
                     limits = {
-                      cpu = "6"
-                      memory = "16Gi"
+                      cpu = "14"
+                      memory = "10Gi"
                     }
                     requests = {
-                      cpu = "1"
-                      memory = "8Gi"
+                      cpu = "0.1"
+                      memory = "1Gi"
                     }
                   }
                 },
@@ -151,11 +139,11 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   resources = {
                     limits = {
                       cpu = "4"
-                      memory = "12Gi"
+                      memory = "1Gi"
                     }
                     requests = {
-                      cpu = "1"
-                      memory = "500M"
+                      cpu = "0.1"
+                      memory = "1M"
                     }
                   }
                 }

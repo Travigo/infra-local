@@ -49,7 +49,7 @@ resource "kubernetes_deployment" "cloudflared" {
         }
 
         container {
-          image = "cloudflare/cloudflared:2023.8.2"
+          image = "cloudflare/cloudflared:2024.12.1"
           name  = "cloudflared"
           args  = ["tunnel", "--config", "/etc/cloudflared/config/config.yaml", "run"]
 
@@ -90,7 +90,7 @@ resource "kubernetes_config_map" "cloudflared" {
   data = {
     "config.yaml" = <<EOT
 # Name of the tunnel you want to run
-tunnel: ${cloudflare_tunnel.ovh_tunnel.id}
+tunnel: ${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}
 credentials-file: /etc/cloudflared/creds/credentials.json
 # Serves the metrics server under /metrics and the readiness server under /ready
 metrics: 0.0.0.0:2000
@@ -118,8 +118,8 @@ resource "kubernetes_secret" "cloudflared" {
   data = {
     "credentials.json" = jsonencode({
       "AccountTag"   = var.cloudflare_account_id,
-      "TunnelID"     = cloudflare_tunnel.ovh_tunnel.id,
-      "TunnelName"   = cloudflare_tunnel.ovh_tunnel.name,
+      "TunnelID"     = cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id,
+      "TunnelName"   = cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.name,
       "TunnelSecret" = random_id.tunnel_secret.b64_std
     })
   }
