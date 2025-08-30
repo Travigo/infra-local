@@ -20,3 +20,8 @@ variable "cloudflare_token" {
   description = "The Cloudflare users API token."
   type        = string
 }
+
+variable "cloudflare_root_domain" {
+  description = "The root domain for the Cloudflare Zone"
+  type        = string
+}

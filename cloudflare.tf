@@ -18,49 +18,49 @@ resource "random_id" "tunnel_secret" {
 
 resource "cloudflare_zero_trust_tunnel_cloudflared" "local_tunnel" {
   account_id = var.cloudflare_account_id
-  name       = "travigo-gcp-kube"
+  name       = "travigo-local-kube"
   secret     = random_id.tunnel_secret.b64_std
 }
 
 # Create DNS entries for the cloudflare tunnel
 resource "cloudflare_record" "root" {
   zone_id = local.cloudflare_zone_id
-  name    = var.cloudflare_zone
+  name    = var.cloudflare_root_domain
   content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "www" {
   zone_id = local.cloudflare_zone_id
-  name    = "www.${var.cloudflare_zone}"
+  name    = "www.${var.cloudflare_root_domain}"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "api" {
   zone_id = local.cloudflare_zone_id
-  name    = "api.${var.cloudflare_zone}"
+  name    = "api-${var.cloudflare_root_domain}"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "kibana" {
   zone_id = local.cloudflare_zone_id
-  name    = "kibana.${var.cloudflare_zone}"
+  name    = "kibana-${var.cloudflare_root_domain}"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "kube" {
   zone_id = local.cloudflare_zone_id
-  name    = "kube.${var.cloudflare_zone}"
+  name    = "kube-${var.cloudflare_root_domain}"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "airflow" {
   zone_id = local.cloudflare_zone_id
-  name    = "airflow.${var.cloudflare_zone}"
+  name    = "airflow-${var.cloudflare_root_domain}"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true

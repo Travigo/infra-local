@@ -34,7 +34,7 @@ resource "helm_release" "airflow" {
         annotations:
           kubernetes.io/ingress.class: nginx
         hosts:
-        - name: airflow.travigo.app
+        - name: airflow-travigo.claydonlee.com
 
     webserver:
       startupProbe:
