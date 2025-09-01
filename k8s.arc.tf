@@ -45,3 +45,19 @@ resource "helm_release" "arc-runner" {
     value = "github-pat"
   }
 }
+
+resource "kubernetes_cluster_role_binding" "runner_perms" {
+  metadata {
+    name = "arc-runner-perms"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = "arc-gha-rs-no-permission"
+    namespace = kubernetes_namespace.arc-runners.metadata[0].name
+  }
+}
