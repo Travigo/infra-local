@@ -58,7 +58,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     spec = {
       members = 1
       type = "ReplicaSet"
-      version = "7.0.12"
+      version = "8.0.13"
 
       security = {
         authentication = {

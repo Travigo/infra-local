@@ -89,36 +89,36 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
   }
 }
 
-resource "kubernetes_manifest" "kibana-primary" {
-  field_manager {
-    force_conflicts = true
-  }
-  depends_on = [
-    helm_release.eck-operator,
-    kubernetes_manifest.elasticsearch-primary
-  ]
+# resource "kubernetes_manifest" "kibana-primary" {
+#   field_manager {
+#     force_conflicts = true
+#   }
+#   depends_on = [
+#     helm_release.eck-operator,
+#     kubernetes_manifest.elasticsearch-primary
+#   ]
 
-  manifest = {
-    apiVersion = "kibana.k8s.elastic.co/v1"
-    kind       = "Kibana"
+#   manifest = {
+#     apiVersion = "kibana.k8s.elastic.co/v1"
+#     kind       = "Kibana"
 
-    metadata = {
-      name = "kibana"
-      namespace = kubernetes_namespace.elastic.metadata[0].name
-    }
+#     metadata = {
+#       name = "kibana"
+#       namespace = kubernetes_namespace.elastic.metadata[0].name
+#     }
 
-    spec = {
-      version = "8.14.3"
-      count = 1
-      elasticsearchRef = {
-        name = "primary"
-      }
-      config = {
-        "server.publicBaseUrl" = "https://kibana.travigo.claydonlee.com"
-      }
-    }
-  }
-}
+#     spec = {
+#       version = "8.14.3"
+#       count = 1
+#       elasticsearchRef = {
+#         name = "primary"
+#       }
+#       config = {
+#         "server.publicBaseUrl" = "https://kibana.travigo.claydonlee.com"
+#       }
+#     }
+#   }
+# }
 
 resource "kubernetes_ingress_v1" "kibana_ingress" {
   metadata {
