@@ -56,8 +56,8 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
                       cpu = "0.1"
                     },
                     limits = {
-                      memory = "4Gi"
-                      cpu = "4"
+                      memory = "1Gi"
+                      cpu = "1"
                     }
                   }
                 }
