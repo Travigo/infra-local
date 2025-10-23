@@ -49,4 +49,9 @@ resource "helm_release" "redis" {
     name = "replica.replicaCount"
     value = "0"
   }
+
+  set {
+    name  = "image.repository"
+    value = "bitnamilegacy/redis"
+  }
 }

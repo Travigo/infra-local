@@ -12,7 +12,7 @@ resource "helm_release" "airflow" {
   repository = "https://airflow.apache.org"
   chart      = "airflow"
 
-  version = "1.15.0"
+  version = "1.18.0"
 
   namespace = kubernetes_namespace.airflow.metadata[0].name
 
@@ -29,7 +29,7 @@ resource "helm_release" "airflow" {
       applyCustomEnv: false
 
     ingress:
-      web:
+      apiServer:
         enabled: true
         annotations:
           kubernetes.io/ingress.class: nginx
@@ -45,14 +45,18 @@ resource "helm_release" "airflow" {
 
     dags:
       persistence:
-        enabled: true
-        size: 0.5Gi
+        enabled: false
       gitSync:
         enabled: true
         repo: https://github.com/travigo/travigo.git
         branch: main
         subPath: "airflow/dags"
         period: 30s
+
+    postgresql:
+      image:
+        repository: postgres
+        tag: "13"
   EOF
   ] 
 }
