@@ -39,28 +39,28 @@ resource "cloudflare_record" "www" {
 }
 resource "cloudflare_record" "api" {
   zone_id = local.cloudflare_zone_id
-  name    = "api-${var.cloudflare_root_domain}"
+  name    = "api.${var.cloudflare_root_domain}"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "kibana" {
   zone_id = local.cloudflare_zone_id
-  name    = "kibana-${var.cloudflare_root_domain}"
+  name    = "kibana.${var.cloudflare_root_domain}"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "kube" {
   zone_id = local.cloudflare_zone_id
-  name    = "kube-${var.cloudflare_root_domain}"
+  name    = "kube.${var.cloudflare_root_domain}"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
 }
 resource "cloudflare_record" "airflow" {
   zone_id = local.cloudflare_zone_id
-  name    = "airflow-${var.cloudflare_root_domain}"
+  name    = "airflow.${var.cloudflare_root_domain}"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
