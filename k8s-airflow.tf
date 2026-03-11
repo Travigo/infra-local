@@ -12,7 +12,7 @@ resource "helm_release" "airflow" {
   repository = "https://airflow.apache.org"
   chart      = "airflow"
 
-  version = "1.18.0"
+  version = "1.19.0"
 
   namespace = kubernetes_namespace.airflow.metadata[0].name
 
