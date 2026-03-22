@@ -58,10 +58,3 @@ resource "cloudflare_record" "kube" {
   type    = "CNAME"
   proxied = true
 }
-resource "cloudflare_record" "airflow" {
-  zone_id = local.cloudflare_zone_id
-  name    = "airflow.${var.cloudflare_root_domain}"
-  content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
-  type    = "CNAME"
-  proxied = true
-}
