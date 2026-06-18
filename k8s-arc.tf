@@ -20,7 +20,7 @@ resource "helm_release" "arc-operator" {
   repository = "oci://ghcr.io/actions/actions-runner-controller-charts"
   chart      = "gha-runner-scale-set-controller"
 
-  version = "0.13.1"
+  version = "0.14.2"
 
   namespace = kubernetes_namespace.arc-system.metadata[0].name
 }
@@ -31,7 +31,7 @@ resource "helm_release" "arc-runner" {
   repository = "oci://ghcr.io/actions/actions-runner-controller-charts"
   chart      = "gha-runner-scale-set"
 
-  version = "0.13.1"
+  version = "0.14.2"
 
   namespace = kubernetes_namespace.arc-runners.metadata[0].name
 
