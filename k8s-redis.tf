@@ -39,7 +39,7 @@ resource "helm_release" "redis" {
   }
   set {
     name = "master.persistence.enabled"
-    value = "false"
+    value = "true"
   }
   set {
     name = "replica.persistence.enabled"
