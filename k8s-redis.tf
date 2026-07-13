@@ -26,32 +26,23 @@ resource "kubernetes_secret" "redis-password" {
 resource "helm_release" "redis" {
   name       = "redis"
 
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/cloudpirates/"
   chart      = "redis"
 
-  version = "18.12.0"
+  version = "0.32.1"
 
   namespace = kubernetes_namespace.redis.metadata[0].name
 
   set {
-    name  = "global.redis.password"
+    name  = "auth.password"
     value = random_password.redis-password.result
   }
   set {
-    name = "master.persistence.enabled"
+    name = "persistence.enabled"
     value = "true"
   }
   set {
-    name = "replica.persistence.enabled"
-    value = "false"
-  }
-  set {
-    name = "replica.replicaCount"
-    value = "0"
-  }
-
-  set {
-    name  = "image.repository"
-    value = "bitnamilegacy/redis"
+    name = "persistence.size"
+    value = "15Gi"
   }
 }
