@@ -15,7 +15,7 @@ resource "kubernetes_namespace" "arc-runners" {
 }
 
 resource "helm_release" "arc-operator" {
-  name       = "arc"
+  name = "arc"
 
   repository = "oci://ghcr.io/actions/actions-runner-controller-charts"
   chart      = "gha-runner-scale-set-controller"
@@ -26,7 +26,7 @@ resource "helm_release" "arc-operator" {
 }
 
 resource "helm_release" "arc-runner" {
-  name       = "arc"
+  name = "arc"
 
   repository = "oci://ghcr.io/actions/actions-runner-controller-charts"
   chart      = "gha-runner-scale-set"
@@ -36,12 +36,12 @@ resource "helm_release" "arc-runner" {
   namespace = kubernetes_namespace.arc-runners.metadata[0].name
 
   set {
-    name = "githubConfigUrl"
+    name  = "githubConfigUrl"
     value = "https://github.com/travigo"
   }
 
   set {
-    name = "githubConfigSecret"
+    name  = "githubConfigSecret"
     value = "github-pat"
   }
 }

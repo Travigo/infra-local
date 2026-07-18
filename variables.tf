@@ -1,3 +1,42 @@
+# AWS Variables
+variable "aws_region" {
+  description = "AWS region hosting the k3s cluster"
+  type        = string
+  default     = "eu-north-1"
+}
+
+variable "cluster_name" {
+  description = "Name used by Cluster Autoscaler to discover node groups"
+  type        = string
+  default     = "travigo"
+}
+
+variable "vpc_id" {
+  description = "VPC containing the k3s cluster"
+  type        = string
+}
+
+variable "subnet_ids" {
+  description = "Public subnets with Internet Gateway routes for autoscaled workers"
+  type        = list(string)
+}
+
+variable "storage_subnet_id" {
+  description = "Public subnet in the single AZ reserved for stateful storage workloads"
+  type        = string
+}
+
+variable "k3s_server_private_ip" {
+  description = "Private IP address of the k3s server"
+  type        = string
+}
+
+variable "k3s_token" {
+  description = "k3s join token for worker nodes"
+  type        = string
+  sensitive   = true
+}
+
 # Cloudflare Variables
 variable "cloudflare_zone" {
   description = "The Cloudflare Zone to use"

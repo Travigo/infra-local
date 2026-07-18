@@ -7,13 +7,13 @@ resource "kubernetes_namespace" "redis" {
 }
 
 resource "random_password" "redis-password" {
-  length           = 64
-  special          = false
+  length  = 64
+  special = false
 }
 
 resource "kubernetes_secret" "redis-password" {
   metadata {
-    name      = "redis-password"
+    name = "redis-password"
   }
 
   data = {
@@ -24,7 +24,7 @@ resource "kubernetes_secret" "redis-password" {
 }
 
 resource "helm_release" "redis" {
-  name       = "redis"
+  name = "redis"
 
   repository = "oci://registry-1.docker.io/cloudpirates/"
   chart      = "redis"
@@ -33,16 +33,37 @@ resource "helm_release" "redis" {
 
   namespace = kubernetes_namespace.redis.metadata[0].name
 
-  set {
-    name  = "auth.password"
-    value = random_password.redis-password.result
-  }
-  set {
-    name = "persistence.enabled"
-    value = "true"
-  }
-  set {
-    name = "persistence.size"
-    value = "15Gi"
-  }
+  values = [
+    yamlencode({
+      auth = {
+        password = random_password.redis-password.result
+      }
+
+      nodeSelector = {
+        workload = "storage"
+      }
+
+      tolerations = [
+        {
+          key      = "workload"
+          operator = "Equal"
+          value    = "storage"
+          effect   = "NoSchedule"
+        }
+      ]
+
+      persistence = {
+        storageClass = "ebs-gp3"
+        enabled      = true
+        size         = "12Gi"
+      }
+
+      resources = {
+        requests = {
+          cpu    = "2"
+          memory = "12Gi"
+        }
+      }
+    })
+  ]
 }

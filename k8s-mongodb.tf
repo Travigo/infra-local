@@ -58,7 +58,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     spec = {
       members = 1
       type = "ReplicaSet"
-      version = "8.2.5"
+      version = "8.3.4"
 
       security = {
         authentication = {
@@ -97,6 +97,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                 name = "data-volume"
               }
               spec = {
+                storageClassName = "ebs-gp3"
                 resources = {
                   requests = {
                     storage = "100Gi"
@@ -109,6 +110,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                 name = "logs-volume"
               }
               spec = {
+                storageClassName = "ebs-gp3"
                 resources = {
                   requests = {
                     storage = "4Gi"
@@ -120,6 +122,17 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
 
           template = {
             spec = {
+              nodeSelector = {
+                workload = "storage"
+              }
+              tolerations = [
+                {
+                  key      = "workload"
+                  operator = "Equal"
+                  value    = "storage"
+                  effect   = "NoSchedule"
+                }
+              ]
               containers = [
                 {
                   name = "mongod"
@@ -129,8 +142,8 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                       memory = "10Gi"
                     }
                     requests = {
-                      cpu = "0.1"
-                      memory = "1Gi"
+                      cpu = "2"
+                      memory = "8Gi"
                     }
                   }
                 },

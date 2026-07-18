@@ -51,10 +51,11 @@ resource "cloudflare_record" "kibana" {
   type    = "CNAME"
   proxied = true
 }
+
+
 resource "cloudflare_record" "kube" {
   zone_id = local.cloudflare_zone_id
   name    = "kube.${var.cloudflare_root_domain}"
-  content = "${cloudflare_zero_trust_tunnel_cloudflared.local_tunnel.id}.cfargotunnel.com"
-  type    = "CNAME"
-  proxied = true
+  content = "51.20.109.220"
+  type    = "A"
 }
