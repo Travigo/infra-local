@@ -84,10 +84,11 @@ resource "aws_launch_template" "general" {
   name_prefix = "${var.cluster_name}-general-"
 
   image_id = data.aws_ami.al2023.id
+  key_name = "laptop"
 
   # The ASG supplies the instance type overrides. Keeping a representative
   # type here also gives Cluster Autoscaler a useful template at size zero.
-  instance_type = "m7i.2xlarge"
+  instance_type = "m7i.xlarge"
 
   # Workers need directly routable public addresses. The supplied subnet IDs
   # must therefore reference public subnets with a route to an Internet Gateway.
@@ -245,10 +246,10 @@ resource "aws_autoscaling_group" "general" {
 
       # Every option is approximately 8 vCPU / 32 GiB, while spanning
       # families and generations to improve Spot capacity availability.
-      override { instance_type = "m7i.2xlarge" }
-      override { instance_type = "m7a.2xlarge" }
-      override { instance_type = "m5.2xlarge" }
-      override { instance_type = "m5d.2xlarge" }
+      override { instance_type = "m7i.xlarge" }
+      override { instance_type = "m7a.xlarge" }
+      override { instance_type = "m5.xlarge" }
+      override { instance_type = "m5d.xlarge" }
     }
   }
 
@@ -264,6 +265,102 @@ resource "aws_autoscaling_group" "general" {
     propagate_at_launch = false
   }
 
+  # NTH processes lifecycle-hook notifications only for explicitly managed
+  # ASGs, ensuring it cordons and drains workers before termination.
+  tag {
+    key                 = "aws-node-termination-handler/managed"
+    value               = "true"
+    propagate_at_launch = false
+  }
+
+  lifecycle {
+    ignore_changes = [desired_capacity]
+  }
+}
+
+# Keep the smaller worker shape in its own ASG. Cluster Autoscaler models a
+# node group from its launch template, so mixing this 4 vCPU / 16 GiB shape
+# with the 8 vCPU / 32 GiB general group would make its scheduling simulation
+# inaccurate for workloads that need the larger shape.
+resource "aws_launch_template" "general_small" {
+  name_prefix = "${var.cluster_name}-general-small-"
+
+  image_id      = data.aws_ami.al2023.id
+  instance_type = "m7a.xlarge"
+  key_name      = "laptop"
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.k3s_worker.name
+  }
+
+  network_interfaces {
+    associate_public_ip_address = true
+    security_groups             = [aws_security_group.k3s_nodes.id]
+  }
+
+  user_data = base64encode(
+    templatefile("${path.module}/k3s-worker.sh", {
+      k3s_url     = "https://${var.k3s_server_private_ip}:6443"
+      k3s_token   = var.k3s_token
+      node_labels = ""
+      node_taints = ""
+    })
+  )
+}
+
+resource "aws_autoscaling_group" "general_small" {
+  name = "${var.cluster_name}-general-small"
+
+  min_size         = 0
+  desired_capacity = 0
+  max_size         = 20
+
+  vpc_zone_identifier = var.subnet_ids
+
+  capacity_rebalance = true
+  health_check_type  = "EC2"
+
+  mixed_instances_policy {
+    instances_distribution {
+      on_demand_base_capacity                  = 0
+      on_demand_percentage_above_base_capacity = 0
+      spot_allocation_strategy                 = "capacity-optimized-prioritized"
+      spot_max_price                           = "0.20"
+    }
+
+    launch_template {
+      launch_template_specification {
+        launch_template_id = aws_launch_template.general_small.id
+        version            = "$Latest"
+      }
+
+      # All overrides provide 4 vCPU and 16 GiB RAM. Their recent Spot prices
+      # are well below the $0.20/hour cap.
+      override { instance_type = "m7a.xlarge" }
+      override { instance_type = "m7i.xlarge" }
+      override { instance_type = "m5.xlarge" }
+      override { instance_type = "m5d.xlarge" }
+    }
+  }
+
+  tag {
+    key                 = "k8s.io/cluster-autoscaler/enabled"
+    value               = "true"
+    propagate_at_launch = false
+  }
+
+  tag {
+    key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+    value               = "owned"
+    propagate_at_launch = false
+  }
+
+  tag {
+    key                 = "aws-node-termination-handler/managed"
+    value               = "true"
+    propagate_at_launch = false
+  }
+
   lifecycle {
     ignore_changes = [desired_capacity]
   }
@@ -273,10 +370,11 @@ resource "aws_launch_template" "batch_import" {
   name_prefix = "${var.cluster_name}-batch-import-"
 
   image_id = data.aws_ami.al2023.id
+  key_name = "laptop"
 
   # Keep batch workers the same size as the general pool while allowing
   # Cluster Autoscaler to choose from multiple Spot-capable families.
-  instance_type = "m7i.2xlarge"
+  instance_type = "m7i.xlarge"
 
   iam_instance_profile {
     name = aws_iam_instance_profile.k3s_worker.name
@@ -323,10 +421,10 @@ resource "aws_autoscaling_group" "batch_import" {
         version            = "$Latest"
       }
 
-      override { instance_type = "m7i.2xlarge" }
-      override { instance_type = "m7a.2xlarge" }
-      override { instance_type = "m5.2xlarge" }
-      override { instance_type = "m5d.2xlarge" }
+      override { instance_type = "m7a.xlarge" }
+      override { instance_type = "m7i.xlarge" }
+      override { instance_type = "m5.xlarge" }
+      override { instance_type = "m5d.xlarge" }
     }
   }
 
@@ -339,6 +437,12 @@ resource "aws_autoscaling_group" "batch_import" {
   tag {
     key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
     value               = "owned"
+    propagate_at_launch = false
+  }
+
+  tag {
+    key                 = "aws-node-termination-handler/managed"
+    value               = "true"
     propagate_at_launch = false
   }
 
@@ -364,7 +468,8 @@ resource "aws_autoscaling_group" "batch_import" {
 resource "aws_launch_template" "storage" {
   name_prefix   = "${var.cluster_name}-storage-"
   image_id      = data.aws_ami.al2023.id
-  instance_type = "m7i.2xlarge"
+  instance_type = "m7i.xlarge"
+  key_name      = "laptop"
 
   iam_instance_profile {
     name = aws_iam_instance_profile.k3s_worker.name
@@ -412,10 +517,10 @@ resource "aws_autoscaling_group" "storage" {
         version            = "$Latest"
       }
 
-      override { instance_type = "m7i.2xlarge" }
-      override { instance_type = "m7a.2xlarge" }
-      override { instance_type = "m5.2xlarge" }
-      override { instance_type = "m5d.2xlarge" }
+      override { instance_type = "m7i.xlarge" }
+      override { instance_type = "m7a.xlarge" }
+      override { instance_type = "m5.xlarge" }
+      override { instance_type = "m5d.xlarge" }
     }
   }
 
@@ -428,6 +533,12 @@ resource "aws_autoscaling_group" "storage" {
   tag {
     key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
     value               = "owned"
+    propagate_at_launch = false
+  }
+
+  tag {
+    key                 = "aws-node-termination-handler/managed"
+    value               = "true"
     propagate_at_launch = false
   }
 
