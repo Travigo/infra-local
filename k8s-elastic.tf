@@ -7,7 +7,7 @@ resource "kubernetes_namespace" "elastic" {
 }
 
 resource "helm_release" "eck-operator" {
-  name       = "elasticsearch"
+  name = "elasticsearch"
 
   repository = "https://helm.elastic.co"
   chart      = "eck-operator"
@@ -30,7 +30,7 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
     kind       = "Elasticsearch"
 
     metadata = {
-      name = "primary"
+      name      = "primary"
       namespace = kubernetes_namespace.elastic.metadata[0].name
     }
 
@@ -38,10 +38,10 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
       version = "8.14.3"
       nodeSets = [
         {
-          name = "primary"
+          name  = "primary"
           count = 1
           config = {
-            "node.roles" = ["master", "data", "ingest", "ml"]
+            "node.roles"            = ["master", "data", "ingest", "ml"]
             "node.store.allow_mmap" = false
           }
 
@@ -64,11 +64,11 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
                   resources = {
                     requests = {
                       memory = "1Gi"
-                      cpu = "0.2"
+                      cpu    = "0.2"
                     },
                     limits = {
                       memory = "1Gi"
-                      cpu = "1"
+                      cpu    = "1"
                     }
                   }
                 }
@@ -82,7 +82,7 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
                 name = "elasticsearch-data"
               }
 
-                spec = {
+              spec = {
                 accessModes = [
                   "ReadWriteOnce"
                 ]
@@ -134,7 +134,7 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
 
 resource "kubernetes_ingress_v1" "kibana_ingress" {
   metadata {
-    name = "kibana-ingress"
+    name      = "kibana-ingress"
     namespace = kubernetes_namespace.elastic.metadata[0].name
     annotations = {
       "nginx.ingress.kubernetes.io/proxy-ssl-verify" = "false"
@@ -156,7 +156,7 @@ resource "kubernetes_ingress_v1" "kibana_ingress" {
               port {
                 number = 5601
               }
-            }    
+            }
           }
 
           path = "/"

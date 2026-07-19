@@ -31,6 +31,11 @@ variable "k3s_server_private_ip" {
   type        = string
 }
 
+variable "k3s_server_security_group_id" {
+  description = "Security group ID attached to the k3s server"
+  type        = string
+}
+
 variable "k3s_token" {
   description = "k3s join token for worker nodes"
   type        = string

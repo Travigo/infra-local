@@ -24,6 +24,10 @@ Set these AWS inputs in a non-committed `terraform.tfvars` before applying:
 vpc_id                 = "vpc-..."
 subnet_ids             = ["public-subnet-...", "public-subnet-..."]
 storage_subnet_id      = "public-subnet-in-volume-az"
-k3s_server_private_ip  = "10.0.0.10"
-k3s_token              = "..."
+k3s_server_private_ip       = "10.0.0.10"
+k3s_server_security_group_id = "sg-..."
+k3s_token                   = "..."
 ```
+
+The configured k3s server private IP is also used to find its security group
+and allow worker API traffic plus Flannel VXLAN UDP/8472 between nodes.

@@ -1,5 +1,5 @@
 resource "helm_release" "mongodb-operator" {
-  name       = "mongodb-operator"
+  name = "mongodb-operator"
 
   repository = "https://mongodb.github.io/helm-charts"
   chart      = "community-operator"
@@ -25,13 +25,13 @@ resource "helm_release" "mongodb-operator" {
 }
 
 resource "random_password" "mongodb-database-password" {
-  length           = 64
-  special          = false
+  length  = 64
+  special = false
 }
 
 resource "kubernetes_secret" "mongodb-database-password" {
   metadata {
-    name      = "mongodb-database-password"
+    name = "mongodb-database-password"
   }
 
   data = {
@@ -51,13 +51,13 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     kind       = "MongoDBCommunity"
 
     metadata = {
-      name = "travigo-mongodb"
+      name      = "travigo-mongodb"
       namespace = "default"
     }
 
     spec = {
       members = 1
-      type = "ReplicaSet"
+      type    = "ReplicaSet"
       version = "8.3.4"
 
       security = {
@@ -79,11 +79,11 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
           roles = [
             {
               name = "root"
-              db = "admin"
+              db   = "admin"
             },
             {
               name = "root"
-              db = "travigo"
+              db   = "travigo"
             }
           ]
         }
@@ -138,11 +138,11 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   name = "mongod"
                   resources = {
                     limits = {
-                      cpu = "14"
+                      cpu    = "14"
                       memory = "10Gi"
                     }
                     requests = {
-                      cpu = "2"
+                      cpu    = "2"
                       memory = "8Gi"
                     }
                   }
@@ -151,11 +151,11 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   name = "mongodb-agent"
                   resources = {
                     limits = {
-                      cpu = "4"
+                      cpu    = "4"
                       memory = "1Gi"
                     }
                     requests = {
-                      cpu = "0.1"
+                      cpu    = "0.1"
                       memory = "1M"
                     }
                   }
@@ -167,7 +167,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
       }
 
       additionalMongodConfig = {
-        "storage.wiredTiger.engineConfig.journalCompressor": "zlib"
+        "storage.wiredTiger.engineConfig.journalCompressor" : "zlib"
       }
     }
   }

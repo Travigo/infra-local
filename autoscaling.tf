@@ -47,8 +47,17 @@ resource "helm_release" "cluster_autoscaler" {
       }
 
       nodeSelector = {
-        "kubernetes.io/os" = "linux"
+        "kubernetes.io/os"                      = "linux"
+        "node-role.kubernetes.io/control-plane" = "true"
       }
+
+      tolerations = [
+        {
+          key      = "node-role.kubernetes.io/control-plane"
+          operator = "Exists"
+          effect   = "NoSchedule"
+        }
+      ]
 
       priorityClassName = kubernetes_priority_class.cluster_autoscaler.metadata[0].name
     })
@@ -161,6 +170,13 @@ resource "aws_security_group" "k3s_nodes" {
   description = "Security group for k3s worker nodes"
   vpc_id      = var.vpc_id
 
+  # Ingress is managed by standalone aws_security_group_rule resources below.
+  # Keep the existing self-rule in place without making this resource revoke
+  # rules that may already have changed outside Terraform.
+  lifecycle {
+    ignore_changes = [ingress]
+  }
+
   ingress {
     description = "k3s node-to-node traffic"
     from_port   = 0
@@ -178,10 +194,32 @@ resource "aws_security_group" "k3s_nodes" {
   }
 }
 
+# Allow all traffic between the k3s server and worker nodes. This covers
+# Flannel, the Kubernetes API, kubelet, and future k3s control-plane traffic.
+resource "aws_security_group_rule" "k3s_nodes_from_server" {
+  type                     = "ingress"
+  security_group_id        = aws_security_group.k3s_nodes.id
+  protocol                 = "-1"
+  from_port                = 0
+  to_port                  = 0
+  source_security_group_id = var.k3s_server_security_group_id
+  description              = "All k3s traffic from the server"
+}
+
+resource "aws_security_group_rule" "k3s_server_from_nodes" {
+  type                     = "ingress"
+  security_group_id        = var.k3s_server_security_group_id
+  protocol                 = "-1"
+  from_port                = 0
+  to_port                  = 0
+  source_security_group_id = aws_security_group.k3s_nodes.id
+  description              = "All k3s traffic from workers"
+}
+
 resource "aws_autoscaling_group" "general" {
   name = "${var.cluster_name}-general"
 
-  min_size         = 0
+  min_size         = 1
   desired_capacity = 0
   max_size         = 20
 
@@ -350,7 +388,7 @@ resource "aws_launch_template" "storage" {
 resource "aws_autoscaling_group" "storage" {
   name = "${var.cluster_name}-storage"
 
-  min_size         = 0
+  min_size         = 1
   desired_capacity = 0
   max_size         = 10
 
