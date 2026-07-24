@@ -60,8 +60,8 @@ resource "helm_release" "redis" {
 
       resources = {
         requests = {
-          cpu    = "2"
-          memory = "12Gi"
+          cpu    = "1"
+          memory = "4Gi"
         }
       }
     })

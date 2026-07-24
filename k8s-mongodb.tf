@@ -142,8 +142,8 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                       memory = "10Gi"
                     }
                     requests = {
-                      cpu    = "2"
-                      memory = "8Gi"
+                      cpu    = "1"
+                      memory = "2Gi"
                     }
                   }
                 },
