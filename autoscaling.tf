@@ -224,7 +224,7 @@ resource "aws_autoscaling_group" "general" {
   desired_capacity = 0
   max_size         = 20
 
-  vpc_zone_identifier = var.subnet_ids
+  vpc_zone_identifier = [var.storage_subnet_id]
 
   capacity_rebalance = true
 
@@ -314,7 +314,7 @@ resource "aws_autoscaling_group" "batch_import" {
   desired_capacity = 0
   max_size         = 20
 
-  vpc_zone_identifier = var.subnet_ids
+  vpc_zone_identifier = [var.storage_subnet_id]
 
   capacity_rebalance = true
   health_check_type  = "EC2"
