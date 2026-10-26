@@ -49,7 +49,7 @@ resource "kubernetes_deployment" "cloudflared" {
         }
 
         container {
-          image = "cloudflare/cloudflared:2026.7.2"
+          image = "cloudflare/cloudflared:2026.10.4"
           name  = "cloudflared"
           args  = ["tunnel", "--config", "/etc/cloudflared/config/config.yaml", "run"]
 

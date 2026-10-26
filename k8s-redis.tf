@@ -29,7 +29,7 @@ resource "helm_release" "redis" {
   repository = "oci://registry-1.docker.io/cloudpirates/"
   chart      = "redis"
 
-  version = "0.32.1"
+  version = "0.37.12"
 
   namespace = kubernetes_namespace.redis.metadata[0].name
 
@@ -39,28 +39,14 @@ resource "helm_release" "redis" {
         password = random_password.redis-password.result
       }
 
-      nodeSelector = {
-        workload = "storage"
-      }
-
-      tolerations = [
-        {
-          key      = "workload"
-          operator = "Equal"
-          value    = "storage"
-          effect   = "NoSchedule"
-        }
-      ]
-
       persistence = {
-        storageClass = "ebs-gp3"
         enabled      = true
-        size         = "12Gi"
+        size         = "64Gi"
       }
 
       resources = {
         requests = {
-          cpu    = "1"
+          cpu    = "0.5"
           memory = "4Gi"
         }
       }

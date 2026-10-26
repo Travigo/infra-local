@@ -47,17 +47,6 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
 
           podTemplate = {
             spec = {
-              nodeSelector = {
-                workload = "storage"
-              }
-              tolerations = [
-                {
-                  key      = "workload"
-                  operator = "Equal"
-                  value    = "storage"
-                  effect   = "NoSchedule"
-                }
-              ]
               containers = [
                 {
                   name = "elasticsearch"
@@ -86,7 +75,6 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
                 accessModes = [
                   "ReadWriteOnce"
                 ]
-                storageClassName = "ebs-gp3"
                 resources = {
                   requests = {
                     storage = "24Gi"

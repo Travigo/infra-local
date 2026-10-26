@@ -56,6 +56,6 @@ resource "cloudflare_record" "kibana" {
 resource "cloudflare_record" "kube" {
   zone_id = local.cloudflare_zone_id
   name    = "kube.${var.cloudflare_root_domain}"
-  content = "51.20.109.220"
+  content = "139.99.210.138"
   type    = "A"
 }

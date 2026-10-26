@@ -2,9 +2,9 @@ resource "helm_release" "mongodb-operator" {
   name = "mongodb-operator"
 
   repository = "https://mongodb.github.io/helm-charts"
-  chart      = "community-operator"
+  chart      = "mongodb-kubernetes"
 
-  version = "0.13.0"
+  version = "1.14.0"
 
   set {
     name  = "operator.resources.limits.cpu"
@@ -58,7 +58,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
     spec = {
       members = 1
       type    = "ReplicaSet"
-      version = "8.3.4"
+      version = "9.0.4"
 
       security = {
         authentication = {
@@ -97,10 +97,9 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                 name = "data-volume"
               }
               spec = {
-                storageClassName = "ebs-gp3"
                 resources = {
                   requests = {
-                    storage = "100Gi"
+                    storage = "120Gi"
                   }
                 }
               }
@@ -110,7 +109,6 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                 name = "logs-volume"
               }
               spec = {
-                storageClassName = "ebs-gp3"
                 resources = {
                   requests = {
                     storage = "4Gi"
@@ -122,24 +120,13 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
 
           template = {
             spec = {
-              nodeSelector = {
-                workload = "storage"
-              }
-              tolerations = [
-                {
-                  key      = "workload"
-                  operator = "Equal"
-                  value    = "storage"
-                  effect   = "NoSchedule"
-                }
-              ]
               containers = [
                 {
                   name = "mongod"
                   resources = {
                     limits = {
-                      cpu    = "14"
-                      memory = "10Gi"
+                      cpu    = "8"
+                      memory = "16Gi"
                     }
                     requests = {
                       cpu    = "1"
@@ -164,10 +151,6 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
             }
           }
         }
-      }
-
-      additionalMongodConfig = {
-        "storage.wiredTiger.engineConfig.journalCompressor" : "zlib"
       }
     }
   }
