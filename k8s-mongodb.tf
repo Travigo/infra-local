@@ -126,7 +126,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
                   resources = {
                     limits = {
                       cpu    = "8"
-                      memory = "16Gi"
+                      memory = "48Gi"
                     }
                     requests = {
                       cpu    = "1"
@@ -150,6 +150,13 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
               ]
             }
           }
+        }
+      }
+
+
+      additionalMongodConfig = {
+        "setParameter" = {
+          "maxIndexBuildMemoryUsageMegabytes": 2048
         }
       }
     }

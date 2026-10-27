@@ -12,7 +12,7 @@ resource "helm_release" "eck-operator" {
   repository = "https://helm.elastic.co"
   chart      = "eck-operator"
 
-  version = "2.13.0"
+  version = "3.5.0"
 
   namespace = kubernetes_namespace.elastic.metadata[0].name
 }
@@ -35,7 +35,7 @@ resource "kubernetes_manifest" "elasticsearch-primary" {
     }
 
     spec = {
-      version = "8.14.3"
+      version = "8.19.23"
       nodeSets = [
         {
           name  = "primary"
