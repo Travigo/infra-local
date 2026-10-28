@@ -99,7 +99,7 @@ resource "kubernetes_manifest" "mongodb-database-crd" {
               spec = {
                 resources = {
                   requests = {
-                    storage = "120Gi"
+                    storage = "800Gi"
                   }
                 }
               }
