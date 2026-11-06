@@ -53,16 +53,16 @@ resource "kubernetes_deployment" "cloudflared" {
           name  = "cloudflared"
           args  = ["tunnel", "--config", "/etc/cloudflared/config/config.yaml", "run"]
 
-          liveness_probe {
-            http_get {
-              path = "/ready"
-              port = 2000
-            }
+          # liveness_probe {
+          #   http_get {
+          #     path = "/ready"
+          #     port = 2000
+          #   }
 
-            initial_delay_seconds = 1
-            period_seconds        = 10
-            failure_threshold     = 1
-          }
+          #   initial_delay_seconds = 1
+          #   period_seconds        = 10
+          #   failure_threshold     = 1
+          # }
 
           volume_mount {
             name       = "config"
