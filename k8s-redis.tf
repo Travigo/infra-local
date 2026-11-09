@@ -40,8 +40,8 @@ resource "helm_release" "redis" {
       }
 
       persistence = {
-        enabled      = true
-        size         = "64Gi"
+        enabled      = false
+        # size         = "64Gi"
       }
 
       resources = {
